@@ -5,42 +5,39 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/16 11:50:25 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/16 18:16:26 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/01 11:55:27 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/05 10:26:29 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_SELECT_H
 # define FT_SELECT_H
-# include "libft/libft.h"
-# include <termios.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <curses.h>
 # include <term.h>
-# include <sys/ioctl.h>
+# include <stdlib.h>
+# include <termios.h>
 # include <signal.h>
+# include <fcntl.h>
+# include "libft/libft.h"
 
-# define ESC 0x1B
-# define SPC 0x20
-# define ENR 0xA
-# define BKS 0x7F
-# define DEL 0x7E335B1B
-# define UP 0x415B1B
-# define DOWN 0x425B1B
-# define RIGHT 0x435B1B
-# define LEFT 0x445B1B
+# define CL(p)  (tgetstr("cl", &p))
+# define COL    (tgetnum("co"))
+# define ROW    (tgetnum("li"))
+# define SO(p)  (tgetstr("so", &p))
 
-# define WIDTH (tgetnum("co"))
-# define HEIGHT (tgetnum("li"))
-
-typedef struct  s_ttyset
+typedef struct  s_tty
 {
-  // int width;
-  // int height;
-  t_list  *files;
-  int count_files;
-  // int hlight;
-  int curr_pos;
-  int len;
-  struct termios tty;
-}               t_ttyset;
+  int cur_mod;
+  int inited;
+  int tty_fd;
+  struct termio *old;
+  struct termio *new;
+}               t_tty;
+
+void clear_scr(char *p);
+void lstadd_end(t_list **head, char *content);
+void free_lst_node(t_list *list);
 
 #endif
