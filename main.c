@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 12:25:52 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/18 16:55:18 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/18 19:03:28 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 void finish(int sign)
 {
   (void)sign;
-  normal();
+  // normal();
   tty(-1, NULL;) /* Close Visual Mode */
   ft_putchar('\n');
   exit (0);
@@ -65,12 +65,32 @@ void size_changed(int sign)
   ft_putstr("Hello, I'm changed\n");
 }
 
-void tty(int ac, char **av)
+void tty(int ac, char **av, char *p)
 {
   static t_ttyset *t;
 
-  t = (t_ttyset*)ft_memalloc(sizeof(t_ttyset));
-  set_ttyset(ac, av, t);
+  if (ac == 0)
+  {
+    (!t->inited) ? tyinit(t) : 0;
+    if (t->cur_mod == 1)
+      return ;
+    ioctl(t->fdtty, TCSETAW, &new);
+    t->cur_mod = 1;
+  }
+  else if (ac == -1)
+  {
+    (!t->inited) ? ttyinit(t) : 0;
+    if (t->cur_mod == 0)
+      return ;
+    ioctl(t->fdtty, TCSETAW, &old);
+    t->cur_mod = 0;
+  }
+  else
+  {
+    t = (t_ttyset*)ft_memalloc(sizeof(t_ttyset));
+    set_ttyset(ac, av, t);
+    ttyinit(t);
+  }
 }
 
 void setsigs(t_ttyset *t)
@@ -78,17 +98,17 @@ void setsigs(t_ttyset *t)
   signal(SIGWINCH, size_changed);
   // signal(SIGTSPT, suspend);
   // signal(SIGCONT, restart);
-  // signal(SIGHUP, finish);
-  // signal(SIGINT, finish);
-  // signal(SIGQUIT, finish);
-  // signal(SIGABRT, finish);
-  // signal(SIGKILL, finish);
-  // signal(SIGBUS, finish);
-  // signal(SIGSEGV, finish);
-  // signal(SIGALARM, finish);
-  // signal(SIGTERM, finish);
-  // signal(SIGUSR1, finish);
-  // signal(SIGUSR2, finish);
+  signal(SIGHUP, finish);
+  signal(SIGINT, finish);
+  signal(SIGQUIT, finish);
+  signal(SIGABRT, finish);
+  signal(SIGKILL, finish);
+  signal(SIGBUS, finish);
+  signal(SIGSEGV, finish);
+  signal(SIGALARM, finish);
+  signal(SIGTERM, finish);
+  signal(SIGUSR1, finish);
+  signal(SIGUSR2, finish);
 
 }
 void ttyinit(t_ttyset *t)
@@ -119,7 +139,10 @@ int main(int ac, char **av)
 
   if (tgetent(buf, p = getenv("TERM")) <= 0)
     exit (1);
-  tty(ac, av);
+  tty(ac, av, p);
+  tty(0, NULL, p);
+  clear_scr(p);
+  
   // ttyinit(t);
   // printf("%s\n", *(t->files));
   // if (ac < 2)
