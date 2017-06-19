@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 11:50:25 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/16 18:16:26 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/18 17:07:06 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,11 @@
 # include <termios.h>
 # include <term.h>
 # include <sys/ioctl.h>
+# include <sys/types.h>
 # include <signal.h>
+# include <fcntl.h>
+# include <time.h>
+# include <curses.h>
 
 # define ESC 0x1B
 # define SPC 0x20
@@ -31,16 +35,29 @@
 # define WIDTH (tgetnum("co"))
 # define HEIGHT (tgetnum("li"))
 
+# define HLIGHT 1000
+
+# define CL(p) (tgetstr("cl", &p))
+
+# define NORM(p) (tgetstr("me", &p))
+
 typedef struct  s_ttyset
 {
   // int width;
   // int height;
-  t_list  *files;
+  char **files;
   int count_files;
-  // int hlight;
+  int hlight[HLIGHT];
+  int count_selected;
   int curr_pos;
-  int len;
-  struct termios tty;
+  int max_len;
+  int cur_mod;
+  int inited;
+  int fdtty;
+  int close;
+  struct termios old;
+  struct termios new;
 }               t_ttyset;
+
 
 #endif
