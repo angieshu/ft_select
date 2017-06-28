@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 12:25:52 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 19:22:01 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/28 12:59:34 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ void make_list(t_files **head, t_ttyset *t, char **av)
       t->max_len = ft_strlen(av[i]);
     f = (t_files*)ft_memalloc(sizeof(t_files));
     f->name = ft_strdup(av[i]);
-    f->cursor = 0;
     f->selected = 0;
     f->next = NULL;
     if (i == 1)
@@ -43,112 +42,77 @@ void make_list(t_files **head, t_ttyset *t, char **av)
 
 void print_items(t_ttyset *t, t_files *f)
 {
-  t_files lst;
+  t_files *lst;
 
   lst = f;
   if (t->q_names > ROWS || t->max_len > COLS)
   {
-    ft_putstr("Error: Not enough room.")
+    ft_putstr("Error: Not enough room.");
     exit(1);
   }
   while (lst)
   {
-    if (lst->cursor)
-        ft_putstr(US);
+
     if (lst->selected)
       ft_putstr(SO);
     ft_putstr(lst->name);
-    ft_putstr(NORM);
+    ft_putchar('\n');
+    // ft_putstr(NORM);
     lst = lst->next;
-}
-// static void print_items(t_ttyset *t)
-// {
-//   int i;
-//
-//   i = 0;
-//   while (t->name[i])
-//   {
-//     ft_putstr(t->name[i++]);
-//     ft_putchar('\n');
-//   }
-// }
-
-static void visual_mode(t_ttyset *t)
-{
-  if (!t->inited)
-    t_init(t);
-  if (t->cur_mod == 1)
-    return ;
-  tcsetattr(t->fd, TCSADRAIN, &t->new);
-  t->cur_mod = 1;
+  }
 }
 
-
-static void init(t_ttyset *t, int ac)
+void selected(t_files **f, int index)
 {
-  char buf[2048];
+  t_files *tmp;
 
-  if (tgetent(buf, getenv("TERM")) <= 0)
+  tmp = *f;
+  while (index--)
+    tmp = tmp->next;
+  tmp->selected = (!tmp->selected) ? 1 : 0;
+}
+
+void t_init(t_ttyset *t)
+{
+  if (tgetent(NULL, getenv("TERM")) <= 0)
     ERROR_EXIT(t)
-  // t->names = av + 1;
-  t->q_names = ac - 1;
-  t->cur_mod = 0;
-  t->inited = 0;
-  t->cur_mod = 0;
+  if ((t->fd = open(ttyname(0), O_RDWR | O_NDELAY)) < 0)
+    ERROR_EXIT(t)
+  tcgetattr(t->fd, &t->term);
+  t->term.c_lflag &= ~(ICANON | ECHO);
+  t->term.c_cc[VMIN] = 1;
+  t->term.c_cc[VTIME] = 0;
+  tcsetattr(t->fd, TCSADRAIN, &t->term);
+  setsigs(t);
   t->q_sel = 0;
   t->max_len = 0;
+  t->cursor = 0;
 }
-
-/*
-** out = 1 -> cursor
-** out = 2 -> selected
-*/
-
 
 
 int main(int ac, char **av)
 {
-  int i;
-  // char *c;
   t_ttyset *t;
   t_files *f = NULL;
 
   t = (t_ttyset*)ft_memalloc(sizeof(t_ttyset));
-  init(t, ac);
   t_init(t);
+  t->q_names = --ac;
   make_list(&f, t, av);
-  visual_mode(t);
-  clear_scr();
-  print_items(t, f);
-  // c = ft_strnew(5);
-  // while (i++ < 5)
-  // {
-  //   read(0, &c, 1);
-  //   ft_putstr(c);
-  // }
-
-  // while (t->q_names)
-  // {
-    // ft_putstr();
-    // put_item(t->names[i], 0, i, 1);
-    // if (c[0] == DOWN)
-    // {
-    //   i++;
-    //   (i == t->q_names) ? (i = 0) : 0;
-    // }
-    // else if (c[0] == '\b' || c[0] == DEL)
-    // {
-    //   i--;
-    //   (i < 0) ? (i = t->q_names - 1) : 0;
-    // }
-    // else if (c[0] == ESC)
-    //   exit(1);
-    // ft_strclr(c);
-    // put_item(t->names[i], 0, i, 0);
-    // else if ()
-
-    // ft_putstr(UL(t);
-    // MS();
-  // }
-
+  // print_items(t, f);
+  goto_xy(t, 0, ft_strlen(f->name));
+  ft_putstr(VI);
+  while (read(0, &t->key, 8) > 0)
+  {
+    clear_scr();
+    print_items(t, f);
+    put_item(f, 0, t->cursor, t->cursor);
+    if (t->key == DOWN)
+    {
+      t->cursor++;
+      (t->cursor == t->q_names) ? (t->cursor = 0) : 0;
+    }
+    if (t->key == SPC)
+      selected(&f, t->cursor);
+  }
 }

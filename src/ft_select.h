@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 11:50:25 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 18:20:00 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/28 13:11:03 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,13 @@
 // # define BKS 0x7F
 # define DEL 0x7F
 # define UP 0x415B1B
-// # define DOWN 0x425B1B
-# define DOWN 80
+// # define UP 65
+# define DOWN 0x425B1B
+// # define DOWN 66
+// # define RIGHT 67
 # define RIGHT 0x435B1B
 # define LEFT 0x445B1B
+// # define LEFT 68
 
 # define COLS (tgetnum("co"))
 # define ROWS (tgetnum("li"))
@@ -45,6 +48,7 @@
 # define VI (tgetstr("vi", NULL))
 # define US (tgetstr("us", NULL))
 # define UL (tgetstr("ul", NULL))
+# define DO (tgetstr("do", NULL))
 # define NORM (tgetstr("me", NULL))
 
 # define SELECTED 10000
@@ -55,7 +59,7 @@
 typedef struct  s_files
 {
   char *name;
-  int cursor;
+  // int cursor;
   int selected;
   struct s_files *next;
 }               t_files;
@@ -63,20 +67,17 @@ typedef struct  s_files
 
 typedef struct  s_ttyset
 {
-  // int width;
-  // int height;
-  // char **names;
-  // int sel[SELECTED];
+  // int key[3];
+  long key;
+  int cursor;
   int q_names;
   int q_sel;
-  // int curr_pos;
   int max_len;
   int cur_mod;
   int inited;
   int fd;
-  char *p;
-  struct termios old;
-  struct termios new;
+  struct termios term;
+  // struct termios new;
   // t_files files;
 
 }               t_ttyset;
@@ -87,9 +88,10 @@ void t_init(t_ttyset *t);
 void goto_xy(t_ttyset *t, int x, int y);
 void normal_mode(t_ttyset *t);
 void stand_end(t_ttyset *t);
-void stand_out(t_ttyset *t);
-void put_item(char *name, int x, int y, int out);
+void stand_out(void);
+void put_item(t_files *f, int x, int y, int n);
 void finish(int s);
+void setsigs(t_ttyset *t);
 
 t_ttyset *old_settings(t_ttyset *t);
 
