@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 13:09:24 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/01 13:09:27 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/27 11:15:09 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,5 @@ void clear_scr(char *p)
 {
   if (!CL(p))
     return ;
-  printf("%s", CL(p));
+  tputs(CL(p), 1);
 }

@@ -1,18 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar.c                                       :+:      :+:    :+:   */
+/*   normal_mode.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/01 12:47:13 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 10:42:22 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/27 13:23:03 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/27 18:20:19 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_select.h"
 
-void	ft_putchar(int c)
+void normal_mode(t_ttyset *t)
 {
-	write(1, &c, 1);
+  if (NORM)
+    ft_putstr(NORM);
+  else
+    stand_end(t);
 }

@@ -1,18 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar.c                                       :+:      :+:    :+:   */
+/*   clear_scr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/01 12:47:13 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 10:42:22 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/01 13:09:24 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/27 18:19:26 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_select.h"
 
-void	ft_putchar(int c)
+
+void clear_scr(void)
 {
-	write(1, &c, 1);
+  if (!CL)
+    return ;
+  ft_putstr(CL);
 }

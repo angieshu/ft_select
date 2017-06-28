@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar.c                                       :+:      :+:    :+:   */
+/*   goto_xy.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/01 12:47:13 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 10:42:22 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/27 13:05:06 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/27 18:20:09 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_select.h"
 
-void	ft_putchar(int c)
+void goto_xy(t_ttyset *t, int x, int y)
 {
-	write(1, &c, 1);
+  if (x < 0 || y < 0 || x > COLS || y > ROWS)
+    ERROR_EXIT(t);
+  ft_putstr(tgoto(CM, x, y));
 }

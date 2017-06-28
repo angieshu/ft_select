@@ -1,18 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putchar.c                                       :+:      :+:    :+:   */
+/*   old_settings.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/03/01 12:47:13 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 10:42:22 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/27 15:01:29 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/27 15:03:06 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "ft_select.h"
 
-void	ft_putchar(int c)
+t_ttyset *old_settings(t_ttyset *t)
 {
-	write(1, &c, 1);
+  static t_ttyset *tmp;
+
+  if (t == NULL)
+    return (tmp);
+  tmp = t;
+  return (t);
 }
