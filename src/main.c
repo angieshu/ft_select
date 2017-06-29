@@ -6,113 +6,91 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 12:25:52 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/28 12:59:34 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/28 18:55:20 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 #include <stdio.h>
 
-void make_list(t_files **head, t_ttyset *t, char **av)
+static void key(t_ttyset *t)
 {
-  t_files *old;
-  t_files *f;
-  int i;
-
-  i = 0;
-  while (av[++i])
+  if (t->key == ESC)
+    finish(0);
+  if (t->key == SPC)
   {
-    if (ft_strlen(av[i]) > t->max_len)
-      t->max_len = ft_strlen(av[i]);
-    f = (t_files*)ft_memalloc(sizeof(t_files));
-    f->name = ft_strdup(av[i]);
-    f->selected = 0;
-    f->next = NULL;
-    if (i == 1)
+    t->selected[t->cursor] = (t->selected[t->cursor]) ? 0 : 1;
+    t->q_sel += (t->selected[t->cursor]) ? 1 : -1;
+  }
+  if (t->key == UP)
+  {
+    t->cursor--;
+    while (t->selected[t->cursor] == -1 || t->cursor == -1)
     {
-      *head = f;
-      old = *head;
-      continue;
+      (t->selected[t->cursor] == -1) ? t->cursor-- : 0;
+      (t->cursor == -1) ? (t->cursor = t->ac - 1) : 0;
     }
-    while (old->next)
-    old = old->next;
-    old->next = f;
   }
-}
-
-void print_items(t_ttyset *t, t_files *f)
-{
-  t_files *lst;
-
-  lst = f;
-  if (t->q_names > ROWS || t->max_len > COLS)
+  if (t->key == DOWN)
   {
-    ft_putstr("Error: Not enough room.");
-    exit(1);
+    t->cursor++;
+    while (t->selected[t->cursor] == -1 || t->cursor == t->ac)
+    {
+      (t->selected[t->cursor] == -1) ? t->cursor++ : 0;
+      (t->cursor == t->ac) ? t->cursor = 0 : 0;
+    }
   }
-  while (lst)
+
+  if (t->key == DEL || t->key == BKS)
   {
-
-    if (lst->selected)
-      ft_putstr(SO);
-    ft_putstr(lst->name);
-    ft_putchar('\n');
-    // ft_putstr(NORM);
-    lst = lst->next;
+    t->selected[t->cursor] = -1;
+    t->cursor++;
+    (t->cursor == t->ac) ? t->cursor = 0 : 0;
+    t->q_names--;
   }
+  t->key = 0;
 }
 
-void selected(t_files **f, int index)
-{
-  t_files *tmp;
-
-  tmp = *f;
-  while (index--)
-    tmp = tmp->next;
-  tmp->selected = (!tmp->selected) ? 1 : 0;
-}
-
-void t_init(t_ttyset *t)
+static void t_init(t_ttyset *t, int i)
 {
   if (tgetent(NULL, getenv("TERM")) <= 0)
-    ERROR_EXIT(t)
+    ERROR_EXIT
   if ((t->fd = open(ttyname(0), O_RDWR | O_NDELAY)) < 0)
-    ERROR_EXIT(t)
+    ERROR_EXIT
   tcgetattr(t->fd, &t->term);
   t->term.c_lflag &= ~(ICANON | ECHO);
   t->term.c_cc[VMIN] = 1;
   t->term.c_cc[VTIME] = 0;
-  tcsetattr(t->fd, TCSADRAIN, &t->term);
+  tcsetattr(t->fd, TCSANOW, &t->term);
   setsigs(t);
   t->q_sel = 0;
   t->max_len = 0;
   t->cursor = 0;
+  while (i-- > 0)
+    t->selected[i] = 0;
 }
-
 
 int main(int ac, char **av)
 {
   t_ttyset *t;
-  t_files *f = NULL;
 
+  if (ac < 2)
+    NO_ARG
   t = (t_ttyset*)ft_memalloc(sizeof(t_ttyset));
-  t_init(t);
-  t->q_names = --ac;
-  make_list(&f, t, av);
-  // print_items(t, f);
-  goto_xy(t, 0, ft_strlen(f->name));
+  t->selected = (int*)ft_memalloc(ac - 1);
+  t->names = ++av;
+  t->ac = --ac;
+  t->q_names = ac;
+  t_init(t, ac);
+  goto_xy(0, 0);
   ft_putstr(VI);
-  while (read(0, &t->key, 8) > 0)
+  while (1)
   {
-    clear_scr();
-    print_items(t, f);
-    put_item(f, 0, t->cursor, t->cursor);
-    if (t->key == DOWN)
-    {
-      t->cursor++;
-      (t->cursor == t->q_names) ? (t->cursor = 0) : 0;
-    }
-    if (t->key == SPC)
-      selected(&f, t->cursor);
+    print_items(t);
+    goto_xy(0, t->cursor);
+    read(0, &t->key, 8);
+    key(t);
+    if (!t->q_names)
+      finish(0);
   }
 }

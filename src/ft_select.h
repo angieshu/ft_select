@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 11:50:25 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/28 13:11:03 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/28 18:53:25 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,12 @@
 # define ESC 0x1B
 # define SPC 0x20
 # define ENR 0xA
-// # define BKS 0x7F
-# define DEL 0x7F
+# define DEL 0x7E335B1B
+# define BKS 0x7F
 # define UP 0x415B1B
-// # define UP 65
 # define DOWN 0x425B1B
-// # define DOWN 66
-// # define RIGHT 67
 # define RIGHT 0x435B1B
 # define LEFT 0x445B1B
-// # define LEFT 68
 
 # define COLS (tgetnum("co"))
 # define ROWS (tgetnum("li"))
@@ -54,22 +50,17 @@
 # define SELECTED 10000
 
 # define MSG (ft_putstr("Error occured\n"))
-# define ERROR_EXIT(t) {MSG;free(t);exit(1);}
-
-typedef struct  s_files
-{
-  char *name;
-  // int cursor;
-  int selected;
-  struct s_files *next;
-}               t_files;
-
+# define ERROR_EXIT {MSG;finish(0);}
+# define WRONG_SIZE {ft_putstr("Not enough room.\n");return;}
+# define NO_ARG {ft_putstr("No arguments received.\n");exit(0);}
 
 typedef struct  s_ttyset
 {
-  // int key[3];
   long key;
+  char **names;
+  int *selected;
   int cursor;
+  int ac;
   int q_names;
   int q_sel;
   int max_len;
@@ -77,22 +68,17 @@ typedef struct  s_ttyset
   int inited;
   int fd;
   struct termios term;
-  // struct termios new;
-  // t_files files;
-
 }               t_ttyset;
 
 
 void clear_scr(void);
-void t_init(t_ttyset *t);
-void goto_xy(t_ttyset *t, int x, int y);
+void goto_xy(int x, int y);
 void normal_mode(t_ttyset *t);
 void stand_end(t_ttyset *t);
-void stand_out(void);
-void put_item(t_files *f, int x, int y, int n);
 void finish(int s);
 void setsigs(t_ttyset *t);
+void print_items(t_ttyset *t);
 
-t_ttyset *old_settings(t_ttyset *t);
+t_ttyset *old_settings(t_ttyset **t);
 
 #endif

@@ -6,18 +6,18 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/27 15:01:29 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/27 15:03:06 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/28 18:50:39 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 
-t_ttyset *old_settings(t_ttyset *t)
+t_ttyset *old_settings(t_ttyset **t)
 {
   static t_ttyset *tmp;
 
-  if (t == NULL)
+  if (*t == NULL)
     return (tmp);
-  tmp = t;
-  return (t);
+  tmp = *t;
+  return (*t);
 }
