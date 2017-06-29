@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 11:50:25 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/28 18:53:25 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/29 01:32:13 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@
 # define VE (tgetstr("ve", NULL))
 # define VI (tgetstr("vi", NULL))
 # define US (tgetstr("us", NULL))
-# define UL (tgetstr("ul", NULL))
-# define DO (tgetstr("do", NULL))
+# define TE (tgetstr("te", NULL))
+
 # define NORM (tgetstr("me", NULL))
 
 # define SELECTED 10000
 
-# define MSG (ft_putstr("Error occured\n"))
-# define ERROR_EXIT {MSG;finish(0);}
-# define WRONG_SIZE {ft_putstr("Not enough room.\n");return;}
-# define NO_ARG {ft_putstr("No arguments received.\n");exit(0);}
+# define MSG {ft_putstr_fd("Error occured\n", 2);}
+# define ERROR_EXIT {MSG finish(0);}
+# define WRONG_SIZE {ft_putstr_fd("Not enough room.\n", 2);return;}
+# define NO_ARG {ft_putstr_fd("No arguments received.\n", 2);exit(0);}
 
 typedef struct  s_ttyset
 {
@@ -62,7 +62,6 @@ typedef struct  s_ttyset
   int cursor;
   int ac;
   int q_names;
-  int q_sel;
   int max_len;
   int cur_mod;
   int inited;
@@ -71,13 +70,13 @@ typedef struct  s_ttyset
 }               t_ttyset;
 
 
-void clear_scr(void);
 void goto_xy(int x, int y);
 void normal_mode(t_ttyset *t);
 void stand_end(t_ttyset *t);
 void finish(int s);
 void setsigs(t_ttyset *t);
 void print_items(t_ttyset *t);
+void t_init(t_ttyset *t, int i);
 
 t_ttyset *old_settings(t_ttyset **t);
 

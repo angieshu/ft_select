@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/27 13:05:06 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/28 18:52:54 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/29 00:36:54 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 void goto_xy(int x, int y)
 {
   if (x < 0 || y < 0 || x > COLS - 1|| y > ROWS - 1)
-    ERROR_EXIT;
-  ft_putstr(tgoto(CM, x, y));
+    ERROR_EXIT
+  ft_putstr_fd(tgoto(CM, x, y), 0);
 }

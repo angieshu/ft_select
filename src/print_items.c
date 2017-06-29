@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 15:20:03 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/28 18:57:01 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/29 01:03:59 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,10 @@
 
 static int size_ok(t_ttyset *t)
 {
-  int i;
   int max_cols;
 
-  t->max_len = 0;
-  i = -1;
-  while (t->names[++i])
-  {
-    if (ft_strlen(t->names[i]) > t->max_len)
-      t->max_len = ft_strlen(t->names[i]);
-  }
   max_cols = COLS / (t->max_len + 1);
-  return (max_cols * ROWS > t->q_names);
+  return (max_cols * (ROWS - 2) > t->q_names);
 }
 
 void print_items(t_ttyset *t)
@@ -35,7 +27,7 @@ void print_items(t_ttyset *t)
   int x;
 
   index = -1;
-  clear_scr();
+  ft_putstr_fd(CL, 0);
   if (!size_ok(t))
     WRONG_SIZE
   x = 0;
@@ -44,15 +36,14 @@ void print_items(t_ttyset *t)
   {
     if (t->selected[index] == -1)
       continue ;
-    if (y == ROWS - 1)
-      goto_xy(x += t->max_len + 1, y = 0);
-    (t->selected[index]) ? ft_putstr(SO) : 0;
-    (index == t->cursor) ? ft_putstr(US) : 0;
-    ft_putstr(t->names[index]);
-    ft_putchar('\n');
+    goto_xy(x, y);
+    (t->selected[index]) ? ft_putstr_fd(SO, 0) : 0;
+    (index == t->cursor) ? ft_putstr_fd(US, 0) : 0;
+    ft_putstr_fd(t->names[index], 0);
+    ft_putchar_fd('\n', 0);
     normal_mode(t);
-    (t->selected[index]) ? ft_putstr(SE) : 0;
-    y++;
-    ft_putnbr(COLS);
+    (t->selected[index]) ? ft_putstr_fd(SE, 0) : 0;
+    (y == ROWS - 2) ? (x += t->max_len + 1) : 0;
+    y += (y == ROWS - 2) ? -y : 1;
   }
 }
