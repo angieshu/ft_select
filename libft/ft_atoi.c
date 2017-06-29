@@ -42,11 +42,11 @@ static int	ft_minus(const char *str)
 	return (0);
 }
 
-long		ft_atoi(const char *str)
+int			ft_atoi(const char *str)
 {
 	int i;
 	int minus;
-	long number;
+	int number;
 
 	number = 0;
 	i = ft_spacing(str);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashulha <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/06 15:20:04 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/02 17:08:33 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/03/06 15:20:06 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ t_list	*ft_lstnew(void const *content, size_t content_size)
 {
 	t_list *node_new;
 
-	node_new = (t_list*)ft_memalloc(sizeof(t_list));
+	node_new = (t_list*)malloc(sizeof(t_list));
 	if (node_new == NULL)
 		return (NULL);
 	if (content == NULL)
