@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/27 12:43:15 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/29 01:34:17 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/29 16:03:15 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,68 +14,59 @@
 
 static void suspend(int s)
 {
-  t_ttyset *t;
-  char susp[3];
+  struct termios t_attr;
+  char susp[2];
 
   (void)s;
-  t = old_settings(&t);
-  ft_putstr_fd(CL, 0);
-  t->term.c_lflag |= (ICANON | ECHO);
-	tcsetattr(0, TCSANOW, &t->term);
-  ft_putstr_fd(TE, 0);
-  ft_putstr_fd(VE, 0);
-  // normal_mode(t);
+  if (tcgetattr(0, &t_attr) == -1)
+    ERROR_EXIT;
+  susp[0] = t_attr.c_cc[VSUSP];
+  susp[1] = 0;
+  t_attr.c_lflag |= ICANON;
+  t_attr.c_lflag |= ECHO;
+  t_attr.c_oflag |= OPOST;
+  if (tcsetattr(0, TCSADRAIN, &t_attr) == -1)
+    ERROR_EXIT;
+  ft_putstr_fd(VE, 2);
+  ft_putstr_fd(TE, 2);
   signal(SIGTSTP, SIG_DFL);
-  susp[0] = t->term.c_cc[VSUSP];
-  susp[1] = '\n';
-  susp[2] = '\0';
-  ioctl(0, TIOCSTI, &susp);
+  ioctl(0, TIOCSTI, susp);
 }
 
 static void restart(int s)
 {
   t_ttyset *t;
+  char buf[2];
 
   (void)s;
+  t = NULL;
   t = old_settings(&t);
-  t_init(t, t->ac);
+  tcgetattr(t->fd, &t->term);
+  t->term.c_lflag &= ~(ICANON | ECHO);
+  t->term.c_oflag &= ~(OPOST);
+  t->term.c_cc[VMIN] = 1;
+  t->term.c_cc[VTIME] = 0;
+  tcsetattr(t->fd, TCSANOW, &t->term);
+  if (tgetent(NULL, getenv("TERM")) <= 0)
+    ERROR_EXIT;
   setsigs(t);
-  print_items(t);
+  ft_putstr_fd(VI, 0);
+  ft_putstr_fd(TI, 0);
+  buf[0] = -62;
+  buf[1] = 0;
+  ioctl(0, TIOCSTI, buf);
 }
 
 static void size_changed(int s)
 {
   t_ttyset *t;
 
-  (void)s;
-  t = NULL;
-  t = old_settings(&t);
-  if (tgetent(NULL, getenv("TERM")) <= 0)
-    ERROR_EXIT
-  print_items(t);
-}
-
-void finish(int s)
-{
-  t_ttyset *t;
-
-  t = NULL;
-  t = old_settings(&t);
-  normal_mode(t);
-  t->term.c_lflag |= (ICANON | ECHO);
-  tcsetattr(t->fd, TCSANOW, &t->term);
-  ft_putstr_fd(CL, 0);
-  if (s != -2)
-    goto_xy(0, 0);
-  else if (t->q_names > ROWS)
-    goto_xy(0, ROWS - 1);
-  else
-    goto_xy(0, t->q_names);
-  ft_putstr_fd(VE, 0);
-  close(t->fd);
-  free(t->selected);
-  free(t);
-  exit(s);
+ (void)s;
+ t = NULL;
+ t = old_settings(&t);
+ if (tgetent(NULL, getenv("TERM")) <= 0)
+   ERROR_EXIT;
+ print_items(t);
 }
 
 void setsigs(t_ttyset *t)
@@ -84,6 +75,12 @@ void setsigs(t_ttyset *t)
   signal(SIGWINCH, size_changed);
   signal(SIGTSTP, suspend);
   signal(SIGCONT, restart);
+  signal(SIGILL, finish);
+  signal(SIGPIPE, finish);
+  signal(SIGFPE, finish);
+  signal(SIGSYS, finish);
+  signal(SIGEMT, finish);
+  signal(SIGTRAP, finish);
   signal(SIGHUP, finish);
   signal(SIGINT, finish);
   signal(SIGQUIT, finish);

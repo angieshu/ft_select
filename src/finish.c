@@ -1,21 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   stand_end.c                                        :+:      :+:    :+:   */
+/*   finish.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/27 13:25:48 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/29 15:01:20 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/29 15:26:12 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/29 15:33:55 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 
-void stand_end(t_ttyset *t)
+void finish(int s)
 {
-  if (SE)
-    ft_putstr_fd(SE, 0);
-  else
-    normal_mode(t);
+  t_ttyset *t;
+
+  t = NULL;
+  t = old_settings(&t);
+  normal_mode(t);
+  t->term.c_lflag |= (ICANON | ECHO);
+  t->term.c_oflag |= OPOST;
+  tcsetattr(t->fd, TCSANOW, &t->term);
+  (s == -1) ? 0 : ft_putstr_fd(CL, 0);
+  ft_putstr_fd(VE, 0);
+  close(t->fd);
+  free(t->selected);
+  free(t);
+  exit(s);
 }

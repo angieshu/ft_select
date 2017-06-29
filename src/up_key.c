@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   stand_end.c                                        :+:      :+:    :+:   */
+/*   up_key.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/27 13:25:48 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/29 15:01:20 by ashulha          ###   ########.fr       */
+/*   Created: 2017/06/29 15:37:59 by ashulha           #+#    #+#             */
+/*   Updated: 2017/06/29 15:39:06 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_select.h"
 
-void stand_end(t_ttyset *t)
+void up_key(t_ttyset *t)
 {
-  if (SE)
-    ft_putstr_fd(SE, 0);
-  else
-    normal_mode(t);
+  t->cursor--;
+  while (t->selected[t->cursor] == -1 || t->cursor == -1)
+  {
+    (t->selected[t->cursor] == -1) ? t->cursor-- : 0;
+    (t->cursor == -1) ? (t->cursor = t->ac - 1) : 0;
+  }
 }

@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 15:20:03 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/29 01:03:59 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/29 15:34:20 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void print_items(t_ttyset *t)
   index = -1;
   ft_putstr_fd(CL, 0);
   if (!size_ok(t))
-    WRONG_SIZE
+    WRONG_SIZE;
   x = 0;
   y = 0;
   while (t->names[++index])

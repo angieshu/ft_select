@@ -6,7 +6,7 @@
 /*   By: ashulha <ashulha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 11:50:25 by ashulha           #+#    #+#             */
-/*   Updated: 2017/06/29 01:32:13 by ashulha          ###   ########.fr       */
+/*   Updated: 2017/06/29 15:46:06 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,18 @@
 # define VI (tgetstr("vi", NULL))
 # define US (tgetstr("us", NULL))
 # define TE (tgetstr("te", NULL))
+# define TI (tgetstr("ti", NULL))
 
 # define NORM (tgetstr("me", NULL))
 
 # define SELECTED 10000
 
-# define MSG {ft_putstr_fd("Error occured\n", 2);}
-# define ERROR_EXIT {MSG finish(0);}
-# define WRONG_SIZE {ft_putstr_fd("Not enough room.\n", 2);return;}
-# define NO_ARG {ft_putstr_fd("No arguments received.\n", 2);exit(0);}
+# define MSG1 (ft_putstr_fd("Error occured\n", 2))
+# define MSG2 (ft_putstr_fd("Not enough room.\n", 2))
+# define MSG3 (ft_putstr_fd("No arguments received.\n", 2))
+# define ERROR_EXIT do{MSG1;finish(0);}while(0)
+# define WRONG_SIZE ({MSG2;return;})
+# define NO_ARG do{MSG3;exit(0);}while(0)
 
 typedef struct  s_ttyset
 {
@@ -76,7 +79,12 @@ void stand_end(t_ttyset *t);
 void finish(int s);
 void setsigs(t_ttyset *t);
 void print_items(t_ttyset *t);
-void t_init(t_ttyset *t, int i);
+void spc_key(t_ttyset *t);
+void up_key(t_ttyset *t);
+void down_key(t_ttyset *t);
+void right_key(t_ttyset *t);
+void left_key(t_ttyset *t);
+void del_key(t_ttyset *t);
 
 t_ttyset *old_settings(t_ttyset **t);
 
